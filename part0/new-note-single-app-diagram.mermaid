@@ -1,0 +1,16 @@
+sequenceDiagram
+    participant browser
+    participant server
+
+    browser->>server: User visits website
+    activate server
+    server-->>browser: .html , .css , .js (with additional logic) files are downloaded
+    deactivate server
+    browser->>browser: user enters new note and .js logic prevents default form submit
+    browser->>server: POST request is sent to server with new note in JSON
+    activate server
+    server-->>browser: server identifies json via content header and confirms status code 201
+    deactivate server
+
+    browser->>browser: Browser uses js logic to update page without reloading
+

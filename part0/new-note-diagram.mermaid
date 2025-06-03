@@ -1,0 +1,26 @@
+sequenceDiagram
+    participant browser
+    participant server
+
+    browser->>server: POST request are sent to /new_note
+    activate server
+    server-->>browser: Server sends a URL redirect to /note
+    deactivate server
+
+    browser->>server: GET request sent to /note
+    activate server
+    server-->>browser: server responds with dependencies needed
+    deactivate server
+
+    browser->>server: multiple GET sent to reload page with new .css .js .json
+    activate server
+    server-->>browser: server forwards new .css .js .json
+    deactivate server
+
+%%    Note right of browser: The browser starts executing the JavaScript code that fetches the JSON from the server
+
+    browser->>server: new POST request sent to /note
+    activate server
+    server-->>browser: Server acknowledges new note and sends 302 Found
+    deactivate server
+    Note right of browser: The browser executes the callback function that renders the notes

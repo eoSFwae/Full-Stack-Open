@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant browser
+    participant server
+
+    browser->>server: New note is sent to server with a single http request
+    activate server
+    server-->>browser: Server answers with successful 201 status
+    deactivate server
+
+
+    browser->>browser: Browser does not reload and updates new note with js
+    activate server
