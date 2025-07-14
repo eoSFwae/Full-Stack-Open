@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useState , useEffect} from 'react'
+import axios from "axios"
+
 
 const Display = ({persons})=>{
     return(persons.map((person)=>(<p>{person.name} {person.phone}</p>)))
@@ -28,6 +30,16 @@ const App = () => {
     ])
     const [newName, setNewName] = useState('')
     const [newPhone, setPhone] = useState('')
+
+    const hook = ()=>{
+        axios
+            .get("http://localhost:3001/persons")
+            .then(res=>{
+                setPersons(res.data)
+            })
+    }
+
+    useEffect(hook, []);
 
 
     const addPerson = (event) => {
