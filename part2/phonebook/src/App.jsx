@@ -6,7 +6,7 @@ const Display = ({persons})=>{
     return(persons.map((person)=>(<p>{person.name} {person.number}</p>)))
 }
 
-const PersonForm = ({addPerson, newName, setNewName, newPhone, setPhone}) => {
+const PersonForm = ({addPerson, newName, setNewName, newNumber, setNumber}) => {
     return(
         <form onSubmit={addPerson}>
             <div>
@@ -15,7 +15,7 @@ const PersonForm = ({addPerson, newName, setNewName, newPhone, setPhone}) => {
                 {/*<div>debug: {newName}</div>*/}
             </div>
             <div>
-                number: <input value={newPhone} onChange={e => {setPhone(e.target.value)}}/>
+                number: <input value={newNumber} onChange={e => {setNumber(e.target.value)}}/>
             </div>
             <div>
                 <button type="submit">add</button>
@@ -29,7 +29,7 @@ const App = () => {
         { name: 'Arto Hellas' }
     ])
     const [newName, setNewName] = useState('')
-    const [newPhone, setPhone] = useState('')
+    const [newNumber, setNumber] = useState('')
 
     const hook = ()=>{
         axios
@@ -38,26 +38,31 @@ const App = () => {
                 setPersons(res.data)
             })
     }
-
     useEffect(hook, []);
-
-    console.log(persons)
 
 
 
     const addPerson = (event) => {
         event.preventDefault()
         if (persons.find(person => person.name === newName)) {
-            (alert(`${newName} is already added to phonebook`))
+            (alert(`${newName} is already added to numberbook`))
             return
         }
-        setPersons(prev => [...prev, {name:newName, phone:newPhone}])
+
+         // setPersons(prev => [...prev, {name:newName, number:newNumber}])
+        const newPerson = {name:newName, number:newNumber}
+        axios
+            .post("http://localhost:3001/persons",newPerson)
+            .then(res=>{setPersons([...persons ,res.data])
+                setNewName('')
+                setNumber("")})
+
     }
 
     return (
         <div>
-            <h2>Phonebook</h2>
-            <PersonForm  addPerson={addPerson} newName={newName} setNewName={setNewName} newPhone={newPhone} setPhone={setPhone} />
+            <h2>Numberbook</h2>
+            <PersonForm  addPerson={addPerson} newName={newName} setNewName={setNewName} newNumber={newNumber} setNumber={setNumber} />
             <h2>Numbers</h2>
             <Display persons={persons}/>
         </div>
