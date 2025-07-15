@@ -3,7 +3,7 @@ import axios from "axios"
 
 
 const Display = ({persons})=>{
-    return(persons.map((person)=>(<p>{person.name} {person.phone}</p>)))
+    return(persons.map((person)=>(<p>{person.name} {person.number}</p>)))
 }
 
 const PersonForm = ({addPerson, newName, setNewName, newPhone, setPhone}) => {
@@ -40,6 +40,9 @@ const App = () => {
     }
 
     useEffect(hook, []);
+
+    console.log(persons)
+
 
 
     const addPerson = (event) => {
