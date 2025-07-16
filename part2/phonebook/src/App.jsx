@@ -1,9 +1,13 @@
 import { useState , useEffect} from 'react'
-import axios from "axios"
+import phonebook from "./services/phonebook";
 
 
-const Display = ({persons})=>{
-    return(persons.map((person)=>(<p>{person.name} {person.number}</p>)))
+const Display = ({persons, deletePerson})=>{
+    return(persons.map((person)=>(
+        <div key={person.id}>
+        <p>{person.name} {person.number} <button onClick={()=> deletePerson(person.id)} type="button">delete</button></p>
+        </div>
+)))
 }
 
 const PersonForm = ({addPerson, newName, setNewName, newNumber, setNumber}) => {
@@ -25,21 +29,14 @@ const PersonForm = ({addPerson, newName, setNewName, newNumber, setNumber}) => {
 }
 
 const App = () => {
-    const [persons, setPersons] = useState([
-        { name: 'Arto Hellas' }
-    ])
+    const [persons, setPersons] = useState([])
     const [newName, setNewName] = useState('')
     const [newNumber, setNumber] = useState('')
 
     const hook = ()=>{
-        axios
-            .get("http://localhost:3001/persons")
-            .then(res=>{
-                setPersons(res.data)
-            })
+        phonebook.getAll().then(response => {setPersons(response)})
     }
     useEffect(hook, []);
-
 
 
     const addPerson = (event) => {
@@ -49,14 +46,15 @@ const App = () => {
             return
         }
 
-         // setPersons(prev => [...prev, {name:newName, number:newNumber}])
         const newPerson = {name:newName, number:newNumber}
-        axios
-            .post("http://localhost:3001/persons",newPerson)
-            .then(res=>{setPersons([...persons ,res.data])
-                setNewName('')
-                setNumber("")})
-
+        phonebook.create(newPerson)
+            .then((response) => (setPersons([...persons, response])))
+    }
+    const deletePerson = (id) => {
+        if(window.confirm('Are you sure you want to delete this person?')){
+           phonebook.deletePerson(id).then(deletedPerson=> setPersons(persons.filter(person => person.id !== deletedPerson.id)))
+               .catch((error) => alert(error))
+        }
     }
 
     return (
@@ -64,7 +62,7 @@ const App = () => {
             <h2>Numberbook</h2>
             <PersonForm  addPerson={addPerson} newName={newName} setNewName={setNewName} newNumber={newNumber} setNumber={setNumber} />
             <h2>Numbers</h2>
-            <Display persons={persons}/>
+            <Display persons={persons} deletePerson={deletePerson}/>
         </div>
     )
 }
