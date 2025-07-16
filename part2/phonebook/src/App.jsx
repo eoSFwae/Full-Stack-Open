@@ -1,25 +1,30 @@
-import { useState , useEffect} from 'react'
+import {useState, useEffect} from 'react'
 import phonebook from "./services/phonebook";
 
 
-const Display = ({persons, deletePerson})=>{
-    return(persons.map((person)=>(
+const Display = ({persons, deletePerson}) => {
+    return (persons.map((person) => (
         <div key={person.id}>
-        <p>{person.name} {person.number} <button onClick={()=> deletePerson(person.id)} type="button">delete</button></p>
+            <p>{person.name} {person.number}
+                <button onClick={() => deletePerson(person.id)} type="button">delete</button>
+            </p>
         </div>
-)))
+    )))
 }
 
 const PersonForm = ({addPerson, newName, setNewName, newNumber, setNumber}) => {
-    return(
+    return (
         <form onSubmit={addPerson}>
             <div>
                 name: <input value={newName} onChange={e => {
-                setNewName(e.target.value)}}></input>
+                setNewName(e.target.value)
+            }}></input>
                 {/*<div>debug: {newName}</div>*/}
             </div>
             <div>
-                number: <input value={newNumber} onChange={e => {setNumber(e.target.value)}}/>
+                number: <input value={newNumber} onChange={e => {
+                setNumber(e.target.value)
+            }}/>
             </div>
             <div>
                 <button type="submit">add</button>
@@ -33,8 +38,10 @@ const App = () => {
     const [newName, setNewName] = useState('')
     const [newNumber, setNumber] = useState('')
 
-    const hook = ()=>{
-        phonebook.getAll().then(response => {setPersons(response)})
+    const hook = () => {
+        phonebook.getAll().then(response => {
+            setPersons(response)
+        })
     }
     useEffect(hook, []);
 
@@ -46,21 +53,22 @@ const App = () => {
             return
         }
 
-        const newPerson = {name:newName, number:newNumber}
+        const newPerson = {name: newName, number: newNumber}
         phonebook.create(newPerson)
             .then((response) => (setPersons([...persons, response])))
     }
     const deletePerson = (id) => {
-        if(window.confirm('Are you sure you want to delete this person?')){
-           phonebook.deletePerson(id).then(deletedPerson=> setPersons(persons.filter(person => person.id !== deletedPerson.id)))
-               .catch((error) => alert(error))
+        if (window.confirm('Are you sure you want to delete this person?')) {
+            phonebook.deletePerson(id).then(deletedPerson => setPersons(persons.filter(person => person.id !== deletedPerson.id)))
+                .catch((error) => alert(error))
         }
     }
 
     return (
         <div>
             <h2>Numberbook</h2>
-            <PersonForm  addPerson={addPerson} newName={newName} setNewName={setNewName} newNumber={newNumber} setNumber={setNumber} />
+            <PersonForm addPerson={addPerson} newName={newName} setNewName={setNewName} newNumber={newNumber}
+                        setNumber={setNumber}/>
             <h2>Numbers</h2>
             <Display persons={persons} deletePerson={deletePerson}/>
         </div>
