@@ -59,10 +59,11 @@ const App = () => {
                 })
 
         }
-
-        const newPerson = {name: newName, number: newNumber}
-        phonebook.create(newPerson)
-            .then((response) => (setPersons([...persons, response])))
+        else {
+            const newPerson = {name: newName, number: newNumber}
+            phonebook.create(newPerson)
+                .then((response) => (setPersons([...persons, response])))
+        }
     }
     const deletePerson = (id) => {
         if (window.confirm('Are you sure you want to delete this person?')) {
