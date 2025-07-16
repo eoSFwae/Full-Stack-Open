@@ -12,16 +12,10 @@ const create = (newPerson)=> {
     return request.then(response => response.data)
 }
 
-const update = (id, updatedPerson)=> {
-    const request = axios.put(`${baseUrl}/${id}`,updatedPerson)
-    return request.then(response => response.data)
-}
-
 const deletePerson = (id) => {
     const request = axios.delete(`${baseUrl}/${id}`)
     return request.then(response => response.data)
         .catch(error => {
-            console.log(error)
             throw error
         })
 }
@@ -29,12 +23,22 @@ const deletePerson = (id) => {
 const updatePhone = (id, updatedPhone)=> {
     const request = axios.put(`${baseUrl}/${id}`,updatedPhone)
     return request.then(response => response.data)
+        .catch((error)=>{
+            throw(error)
+        })
 }
+
+// const update = (id, updatedPerson)=> {
+//     const request = axios.put(`${baseUrl}/${id}`,updatedPerson)
+//     return request.then(response => response.data)
+//         .catch((error)=>{
+//             throw(error)
+//         })
+// }
 
 export default {
     getAll,
     create,
-    update,
     deletePerson,
     updatePhone
 }
