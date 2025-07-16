@@ -1,6 +1,15 @@
 import {useState, useEffect} from 'react'
 import phonebook from "./services/phonebook";
 
+const successResponse = {
+    color: "green",
+    background: "lightgrey",
+    fontSize: "20px",
+    borderStyle: "solid",
+    borderRadius: "5px",
+    padding: "10px",
+    marginBottom: "10px"
+}
 
 const Display = ({persons, deletePerson}) => {
     return (persons.map((person) => (
@@ -33,10 +42,23 @@ const PersonForm = ({addPerson, newName, setNewName, newNumber, setNumber}) => {
     )
 }
 
+const Notification = ({message, style})=> {
+    if (message === null) {
+        return null
+    }
+
+    return (
+        <div style={style} className='success'>
+            {message}
+        </div>
+    )
+}
+
 const App = () => {
     const [persons, setPersons] = useState([])
     const [newName, setNewName] = useState('')
     const [newNumber, setNumber] = useState('')
+    const [successMessage, setSuccessMessage] = useState(null)
 
     const hook = () => {
         phonebook.getAll().then(response => {
@@ -56,13 +78,19 @@ const App = () => {
             phonebook.updatePhone(existingPerson.id, {...existingPerson, number: newNumber})
                 .then(updatedPerson => {
                     setPersons(persons.map(person => person.id === updatedPerson.id ? updatedPerson : person))
+                    setSuccessMessage(`${newName} is now updated to a new phone number`)
+                    setTimeout(() => {setSuccessMessage(null)},5000)
                 })
 
         }
         else {
             const newPerson = {name: newName, number: newNumber}
             phonebook.create(newPerson)
-                .then((response) => (setPersons([...persons, response])))
+                .then((response) => {
+                    setPersons([...persons, response])
+                    setSuccessMessage(`${newName} has been added`)
+                    setTimeout(() => {setSuccessMessage(null)},5000)
+                })
         }
     }
     const deletePerson = (id) => {
@@ -75,6 +103,7 @@ const App = () => {
     return (
         <div>
             <h2>Numberbook</h2>
+            <Notification style={successResponse} message={successMessage} />
             <PersonForm addPerson={addPerson} newName={newName} setNewName={setNewName} newNumber={newNumber}
                         setNumber={setNumber}/>
             <h2>Numbers</h2>
