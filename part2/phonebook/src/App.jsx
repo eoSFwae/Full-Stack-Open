@@ -11,6 +11,16 @@ const successResponse = {
     marginBottom: "10px"
 }
 
+const failedResponse = {
+    color: "red",
+    background: "lightgrey",
+    fontSize: "20px",
+    borderStyle: "solid",
+    borderRadius: "5px",
+    padding: "10px",
+    marginBottom: "10px"
+}
+
 const Display = ({persons, deletePerson}) => {
     return (persons.map((person) => (
         <div key={person.id}>
@@ -48,7 +58,7 @@ const Notification = ({message, style})=> {
     }
 
     return (
-        <div style={style} className='success'>
+        <div style={style} className='response'>
             {message}
         </div>
     )
@@ -59,6 +69,7 @@ const App = () => {
     const [newName, setNewName] = useState('')
     const [newNumber, setNumber] = useState('')
     const [successMessage, setSuccessMessage] = useState(null)
+    const [errorMessage, setErrorMessage] = useState(null)
 
     const hook = () => {
         phonebook.getAll().then(response => {
@@ -80,6 +91,12 @@ const App = () => {
                     setPersons(persons.map(person => person.id === updatedPerson.id ? updatedPerson : person))
                     setSuccessMessage(`${newName} is now updated to a new phone number`)
                     setTimeout(() => {setSuccessMessage(null)},5000)
+
+                })
+                .catch((error)=>{
+                    console.log(error)
+                    setErrorMessage(`Information of ${existingPerson.name} has already been deleted`)
+                    setTimeout(() => {setErrorMessage(null)},5000)
                 })
 
         }
@@ -99,7 +116,8 @@ const App = () => {
             phonebook.deletePerson(id).then(deletedPerson => setPersons(persons.filter(person => person.id !== deletedPerson.id)))
                 .catch((error)=>{
                     console.log(error)
-                    setSuccessMessage(`Information of ${currentPerson.name} has already been deleted`)
+                    setErrorMessage(`Information of ${currentPerson.name} has already been deleted`)
+                    setTimeout(() => {setErrorMessage(null)},5000)
                 })
         }
     }
@@ -108,6 +126,7 @@ const App = () => {
         <div>
             <h2>Numberbook</h2>
             <Notification style={successResponse} message={successMessage} />
+            <Notification style={failedResponse} message={errorMessage} />
             <PersonForm addPerson={addPerson} newName={newName} setNewName={setNewName} newNumber={newNumber}
                         setNumber={setNumber}/>
             <h2>Numbers</h2>
