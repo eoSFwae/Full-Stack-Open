@@ -1,12 +1,14 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
-const cors = require('cors');
+const Person = require('./models/phonebook')
+
 
 
 morgan.token('body',(req,res)=>{return JSON.stringify(req.body)})
 
-app.use(cors());
+app.use(express.static('dist'));
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
@@ -39,45 +41,59 @@ const generateId = ()=>{
 }
 
 app.get('/api/persons', (request, response) => {
-    response.json(persons);
+    Person.find({}).then(persons => {
+        response.json(persons)
+    })
 })
 
 app.get('/api/info', (request, response) => {
-    const phonebookCount = persons.length;
-    const date = new Date();
-    response.set('content-type', 'text/html');
-    response.send(
-        `<p>Phonebook has info for ${phonebookCount} people</p>
+    Person.countDocuments({}).then(count => {
+        const date = new Date();
+        response.set('content-type', 'text/html');
+        response.send(
+            `<p>Phonebook has info for ${count} people</p>
                <p>${date}</p>
     `);
+    })
+
 })
 
 app.get('/api/persons/:id', (request, response) => {
     const id = request.params.id
-    const person = persons.find(person => person.id === id)
+    const person = Person.find(person => person.id === id)
     response.json(person);
 })
 
 app.delete('/api/persons/:id', (request, response) => {
     const id = request.params.id
-    persons = persons.filter(person => person.id !== id)
-    response.status(204).end()
+    persons = Person.findByIdAndDelete(id).then(person => {
+        response.status(204).end()
+    })
+        .catch(e => {
+            response.status(400).json({error: e.message})
+        })
 })
 
 app.post('/api/persons', (request, response) => {
-    const id = generateId()
-    const body = {...request.body, id}
+    // const id = generateId()
+    const body = request.body
 
     if(!body.name || !body.number){
         return response.status(400).json({ error: 'missing required fields' })
     }
 
-    if(persons.find(person => person.name === body.name)){
-        return response.status(400).json({ error: 'name must be unique' })
-    }
+    // if(persons.find(person => person.name === body.name)){
+    //     return response.status(400).json({ error: 'name must be unique' })
+    // }
 
-    persons = persons.concat(body)
-    response.json(body)
+    const person = new Person({
+        name: body.name,
+        number: body.number
+    })
+
+    person.save().then((savedPerson) => {
+        response.json(savedPerson)
+    })
 })
 
 
