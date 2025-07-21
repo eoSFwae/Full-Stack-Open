@@ -113,7 +113,7 @@ const App = () => {
     const deletePerson = (id) => {
         const currentPerson = persons.find(person => person.id === id)
         if (window.confirm('Are you sure you want to delete this person?')) {
-            phonebook.deletePerson(id).then(deletedPerson => setPersons(persons.filter(person => person.id !== deletedPerson.id)))
+            phonebook.deletePerson(id).then(() => setPersons(persons.filter(person => person.id !== id)))
                 .catch((error)=>{
                     console.log(error)
                     setErrorMessage(`Information of ${currentPerson.name} has already been deleted`)
