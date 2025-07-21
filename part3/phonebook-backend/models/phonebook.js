@@ -18,11 +18,15 @@ mongoose.connect(url)
     .then(result =>{
         console.log('Connected to database')
     }).catch(err =>{
-        console.log('failed to connect to database', err)
+    console.log('failed to connect to database', err)
 })
 
 const personSchema = new mongoose.Schema({
-    name: String,
+    // With Validation
+    name: {
+        type: String,
+        minlength: 3
+    },
     number: String,
 })
 
