@@ -15,7 +15,7 @@ console.log('connecting to', url)
 mongoose.set('strictQuery',false)
 
 mongoose.connect(url)
-    .then(result =>{
+    .then(() =>{
         console.log('Connected to database')
     }).catch(err =>{
     console.log('failed to connect to database', err)
