@@ -16,7 +16,7 @@ mongoose.set('strictQuery',false)
 
 mongoose.connect(url)
     .then(result =>{
-        console.log('Connected to database', result)
+        console.log('Connected to database')
     }).catch(err =>{
         console.log('failed to connect to database', err)
 })
@@ -36,6 +36,9 @@ personSchema.set('toJSON', {
 
 
 const Person = mongoose.model('Person', personSchema)
+
+
+module.exports = Person
 
 // if (process.argv.length === 2) {
 //     Person.find({}).then(result => {
@@ -58,5 +61,3 @@ const Person = mongoose.model('Person', personSchema)
 //
 // }
 
-
-module.exports = mongoose.model("Person", Person)
